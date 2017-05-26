@@ -186,7 +186,7 @@
     <integer name="action_chooser_anim_duration">250</integer>
     <integer name="action_chooser_bounce_delay">500</integer>
     <integer name="action_chooser_confirmation_duration">500</integer>
-    <integer name="google_play_services_version">10084000</integer>
+    <integer name="google_play_services_version">10260000</integer>
     <plurals name="time_difference_short_days"><item quantity="one"><ns1:g id="number_of_days">%d</ns1:g>d</item>
 <item quantity="other"><ns1:g id="number_of_days">%d</ns1:g>d</item>
 </plurals>
