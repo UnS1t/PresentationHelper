@@ -58,18 +58,18 @@ public class IndexController implements Initializable{
 	Scene scene; //for switching scenes
 	ArrayList<Project> projects; //all the projects Instances
 
-	
-	
+
+
 	 public IndexController() {
 		primaryStage = Main.getPrimaryStage();
 		primaryStage.setResizable(false);
-		
+
 		stage = new Stage();
 		setEvents();
-		
+
 	}
 	 public  void setConnected(){
-		 StatusBarLabel.setText("Connected"); 
+		 StatusBarLabel.setText("Connected");
 	 }
 	 public  void setNotConnected(){
 		 StatusBarLabel.setText("Not Connected");
@@ -90,16 +90,16 @@ public class IndexController implements Initializable{
 
     @FXML
     private ListView<Project> projectListView;
-  
+
     @Override
 	public void initialize(URL location, ResourceBundle resources) {
     	//connectionStatusBar.setPadding(new Insets(0,0,-100,0));
 
-    	//thread.start();1 
+    	//thread.start();1
     	readProjects();
     	// in order to just pick on item at a time
     	projectListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-    	
+
     	projectListView.setCellFactory(new Callback<ListView<Project>, ListCell<Project>>() {
 
 			@Override
@@ -108,78 +108,78 @@ public class IndexController implements Initializable{
 					@Override
 					protected void updateItem(Project item, boolean empty) {
 						super.updateItem(item, empty);
-						
+
 						if(item != null || !empty){
 							Image img = item.getIcon();
 							ImageView imgView = new ImageView(img);
 							imgView.setImage(img);
 							setGraphic(imgView);
 							setText(item.getName());
-							
+
 						}else{
 							setGraphic(null);
 							setText(null);
 						}
 					}
 				};
-				
+
 				return projectListCell;
 			}
 		});
-    	
-    	
+
+
     	loadViewList();
 
 	}
     @FXML
     void onStartClick(ActionEvent event) throws IOException {
 
-    	
-		
+
+
     	if(isSelected()){
     	OutputStream outputStream = ProcessConnectionThread.outputStream;
     	Project project = selectedProject();
     	Main.test = new PPT(project, MsoTriState.msoTrue);
     	Main.test.start();
     	System.out.println(Arrays.toString(Main.test.getNotes()));
-    	
+
     	if(outputStream != null){
-    		
+
     		project.setNoteArray();
     		Gson gson = new Gson();
-        	
-        	
+
+
         	LiteProject liteProject = new LiteProject(project);
         	String jsonStr = gson.toJson(liteProject);
     		DataOutputStream dou = new DataOutputStream(outputStream);
     		System.out.println(jsonStr);
-    		
+
     		dou.writeUTF(jsonStr);
-    		
-    		
-    	 
-    	 
-    	 
+
+
+
+
+
     	}else{
     		System.out.println("Please connect a device before starting!");
     	}
 
-    }	
+    }
     }
     @FXML
     void onAddClick(ActionEvent event) throws IOException {
     	FXUtils.switchScene(SceneSelection.MENU, projects, selectedIndex() ,false);
     }
-    
+
     @FXML
     void onEditClick(ActionEvent event) throws IOException {
     	if(isSelected()){
     		FXUtils.switchScene(SceneSelection.NOTES_CHOICE, projects, selectedIndex(), false);
     	}
-   	
-    	
-    	
-    	
+
+
+
+
 
     }
 
@@ -199,10 +199,10 @@ public class IndexController implements Initializable{
     	loadViewList();
     		}
     	}
-    	
+
 
     }
-    
+
 
     @FXML
     void onImportExportClick(ActionEvent event) throws ClassNotFoundException {
@@ -210,7 +210,7 @@ public class IndexController implements Initializable{
 
     }
 
-    
+
     @FXML
     void onKeyReleasedSearch(KeyEvent event){
     	//Main.test.getCount();
@@ -223,7 +223,7 @@ public class IndexController implements Initializable{
     		}
     	}else{loadViewList();}
     }
-    
+
    	public boolean isSelected(){
    		boolean b = selectedIndex() > -1;
    		if(!b){
@@ -236,14 +236,14 @@ public class IndexController implements Initializable{
 	    	ButtonType buttonTypeOk = new ButtonType("Ok");
 	    	alert.getButtonTypes().setAll(buttonTypeOk);
 	    	alert.show();
-	    	
+
    		}
-   		
+
    		return b;
    	}
-   	
+
    	public boolean removeConfirm(){
-   		
+
    		boolean b = false;
    		String str = null;
    		switch (selectedProject().getProjectType()){
@@ -256,29 +256,29 @@ public class IndexController implements Initializable{
    					+ "The notes will be permanently deletd";
    			break;
    		}
-   		
+
    		Alert alert = new Alert(AlertType.CONFIRMATION);
    		alert.setTitle("Confirmation");
    		alert.setHeaderText(str);
    		alert.setContentText("Please confirm your choice.");
-   		
+
    		ButtonType buttonTypeYes = ButtonType.YES;
     	ButtonType buttonTypeNo = ButtonType.NO;
-    	
+
 
 
     	alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);
     	//alert.onCloseRequestProperty(Event)
-    	
+
 
     	Optional<ButtonType> result = alert.showAndWait();;
     	if (result.get() == buttonTypeYes){
     	b = true;
     	}
-   		
+
    		return b;
    	}
-   	
+
    	public void importExportChoice() throws ClassNotFoundException{
    		final Alert alert = new Alert(AlertType.CONFIRMATION);
     	alert.setTitle("Import/Export");
@@ -287,15 +287,15 @@ public class IndexController implements Initializable{
     	ButtonType buttonTypeCancel = new ButtonType("Cancel");
     	ButtonType buttonTypeImport = new ButtonType("Import");
     	ButtonType buttonTypeExport = new ButtonType("Export");
-    	
+
 
 
     	alert.getButtonTypes().setAll(buttonTypeImport, buttonTypeExport ,buttonTypeCancel);
     	Optional<ButtonType> result = alert.showAndWait();
     	if(result.get() == buttonTypeCancel){
-    		
+
     	}
-    	
+
     	else if (result.get() == buttonTypeImport){
     		try {
 				importProject();
@@ -303,21 +303,21 @@ public class IndexController implements Initializable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    		
+
     	}
 
-    		
+
     	else if (result.get() == buttonTypeExport) {
     		if (isSelected()){
     			System.out.println("EXPORT");
     			FXUtils.switchScene(SceneSelection.EXPORT, projects, selectedIndex(), false);
-    			
-    			}
-    		
-    		}
-    	
 
-		
+    			}
+
+    		}
+
+
+
 	}
    	private void importProject() throws ClassNotFoundException, IOException{
    		FileChooser fileChooser = new FileChooser();
@@ -328,31 +328,31 @@ public class IndexController implements Initializable{
 		if (pathFile != null){
 		try {
 
-			
+
 			importFile = new ZipFile(pathFile);
 		} catch (ZipException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		File importedProject = null;
 		String error = null;
-		
-		
+
+
 			try {
 				importedProject = IO.importProject(importFile);
-			} 
+			}
 				catch (FileNotFoundException |ClassNotFoundException e) {
 					System.out.println("this project file is not valid");
 					e.printStackTrace();
-					
+
 			} catch (ZipException e) {
 				System.out.print("this is not a valid zip file: " + e.toString());
-				
+
 			} catch (IOException e) {
 				System.out.println(e.toString());
 			}
-			
+
 			if(importedProject != null) {
 				File data = new File(importedProject + "/"+"data.dat");
 				projects.add(IO.deserialize(data));
@@ -361,26 +361,26 @@ public class IndexController implements Initializable{
 				importSuccesAlert.setHeaderText("the project " + importedProject.getName() + " has been imported!");
 				importSuccesAlert.show();
 			}
-			
+
 			loadViewList();
 		}
    	}
 
     private void loadViewList(){
     	projectListView.getItems().clear();
-    	
+
     	try{
-    		
+
         	for(Project project : projects){
         		projectListView.getItems().add(project);
         	}
-        	
+
         	}catch(NullPointerException ex){
-        		
+
         	}
 
     }
-   
+
 private Project selectedProject(){return projects.get(selectedIndex());}
 private int selectedIndex(){return projectListView.getSelectionModel().getSelectedIndex();}
 
@@ -392,17 +392,17 @@ public  void readProjects(){
 		projects = new ArrayList<Project>();
 		e.printStackTrace();
 	} catch (IOException e) {
-		// TODO Auto-generated catch block
+		
 		e.printStackTrace();
 	}
-	
+
 	}
-public void setEvents(){	
+public void setEvents(){
 	primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
     public void handle(WindowEvent we) {
     	System.out.println(projects.size());
     	  for (Project project: projects){
-    		  
+
     		  IO.serialize(project,IO.dataDir.getName());
     		  }
     	  try{
@@ -411,14 +411,14 @@ public void setEvents(){
           BlueCoveImpl.shutdown();
       }
   });
-	
+
 primaryStage.setOnShown(new EventHandler<WindowEvent>() {
 
 	@Override
 	public void handle(WindowEvent event) {
-		
+
 		loadViewList();
-		
+
 	}
 });
 	}
